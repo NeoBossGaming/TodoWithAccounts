@@ -31,6 +31,7 @@
                 <tr>
                     <th>Task No</th>
                     <th>Content</th>
+                    <th>Due Date</th>
                     <th>Date Added</th>
                     <th>Actions</th>
                 </tr>
@@ -40,7 +41,8 @@
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ task.content }}</td>
-                    <td>{{ task.date_added }}</td>
+                    <td>{{ task.due_date }}</td>
+                    <td>{{ task.datetime }}</td>
                     <td>
                         <form action="/tasks/delete/{{ task.id }}" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -53,9 +55,15 @@
         <div class="mt-4"></div>
             <form action="/tasks/{{user_id}}" method="POST" class="d-flex">
             <input type="text" name="content" class="form-control me-2" placeholder="New Task" required>
+            <input type="text" name ="due_date" class="form-control me-2" placeholder="Due Date (YYYY-MM-DD)" required>
             <button type="submit" class="btn btn-primary">Add Task</button>
             </form>
         </div>
+        {% if error %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
     </div>
 
 </body>
