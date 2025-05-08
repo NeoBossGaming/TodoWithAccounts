@@ -23,7 +23,8 @@ class User(db.Model):
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(100), nullable=False)
-    datetime = db.Column(db.DateTime, default=lambda: datetime.utcnow())
+    due_date = db.Column(db.DateTime, nullable=False)
+    datetime = db.Column(db.DateTime, default=lambda: datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self): 
@@ -73,7 +74,13 @@ def tasks(user_id):
     print(tasks)
     if request.method == "POST":
         task_content = request.form.get('content')
-        new_task = Task(content=task_content, user_id=user_id)
+        due_date = request.form.get('due_date')
+        # Convert due_date to datetime object
+        try:
+            due_date = datetime.strptime(due_date, '%Y-%m-%d')
+        except ValueError:
+            return render_template('tasks.html', tasks=tasks, user_id=user_id, error="Invalid date format")
+        new_task = Task(content=task_content, due_date=due_date, user_id=user_id, datetime=datetime.now())
         db.session.add(new_task)
         db.session.commit()
         return redirect(f'/tasks/{user_id}')
